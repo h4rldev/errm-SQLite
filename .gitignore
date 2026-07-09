@@ -1,0 +1,9 @@
+.cache
+.direnv
+_build
+*.d
+*.o
+priv
+compile_commands.json
+*.crashdump
+*.beam

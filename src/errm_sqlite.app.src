@@ -1,0 +1,13 @@
+{application, errm_sqlite, [
+    {description, "an erlang library exposing SQLite, and providing some helpers for working with it."},
+    {vsn, "0.1.0"},
+    {registered, []},
+    {applications, [
+        kernel,
+        stdlib
+    ]},
+    {env, []},
+    {modules, []},
+    {licenses, ["BSD-3"]},
+    {links, [{"Codeberg", "https://codeberg.org/h4rl/errm-HTTP"}]}
+ ]}.
