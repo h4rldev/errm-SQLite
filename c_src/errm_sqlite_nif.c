@@ -111,7 +111,10 @@ static erl_nif_term_t nif_open(erl_nif_env_t *env, i32 argc,
 
   db_handle_t *db_handle =
       enif_alloc_resource(DB_RESOURCE, sizeof(db_handle_t));
-  if ((rc = sqlite3_open(path, &db_handle->db)) != SQLITE_OK) {
+  if ((rc = sqlite3_open_v2(path, &db_handle->db,
+                            SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
+                                SQLITE_OPEN_FULLMUTEX,
+                            null)) != SQLITE_OK) {
     message = sqlite3_errmsg(db_handle->db);
     goto fail;
   }
@@ -143,6 +146,7 @@ static erl_nif_term_t nif_close(erl_nif_env_t *env, i32 argc,
   if (rc == SQLITE_BUSY)
     return enif_make_atom(env, "busy");
 
+  db_handle->db = null;
   return make_ok(env);
 }
 

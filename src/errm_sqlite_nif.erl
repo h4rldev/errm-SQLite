@@ -1,9 +1,7 @@
 -module(errm_sqlite_nif).
 -export([open/1, close/1, prepare/2, bind/2, step/1, finalize/1, exec/2, changes/1, last_insert_rowid/1]).
 -on_load(init/0).
-
--type db_handle() :: reference().
--type stmt_handle() :: reference().
+-include("include/errm_sqlite.hrl").
 
 -spec init() -> ok.
 init() ->

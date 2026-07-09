@@ -1,6 +1,7 @@
 .cache
 .direnv
 _build
+result
 *.d
 *.o
 priv
