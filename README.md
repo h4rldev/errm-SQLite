@@ -3,8 +3,9 @@
 An erlang library that exposes SQLite, and provides some helpers for working with it.
 
 ## Dependencies
-    - Erlang/OTP 28 or higher.
-    - SQLite 3.x
+
+- Erlang/OTP 28 or higher.
+- SQLite 3.x
 
 ## How to use
 
