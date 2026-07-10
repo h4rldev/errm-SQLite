@@ -1,6 +1,6 @@
 # Errm... SQLite!
 
-An erlang library that exposes SQLite, and provides some helpers for working with it.
+A small library that exposes SQLite, and provides some helpers for working with it.
 
 ## Dependencies
 
@@ -8,6 +8,8 @@ An erlang library that exposes SQLite, and provides some helpers for working wit
 - SQLite 3.x
 
 ## How to use
+
+WIP, In the meantime, check out [test/errm_sqlite_tests.erl](test/errm_sqlite_tests.erl) if you want some ideas on how to use it.
 
 ## License
 
