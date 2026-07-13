@@ -6,14 +6,26 @@
 -spec init() -> ok.
 init() ->
   NifPath = case code:priv_dir(errm_sqlite) of
-    Dir when is_list(Dir) -> filename:join(Dir, "errm_sqlite_nif");
-    _ -> {error, nif_not_found}
-  end,
-  NifPathStr = case NifPath of
-    Path when is_list(Path) -> Path
-  end,
-  ok = erlang:load_nif(NifPathStr, 0),
-  ok.
+    PrivDir when is_list(PrivDir) ->
+      filename:join([PrivDir, "errm_sqlite_nif"]);
+    {error, bad_name} ->
+      case code:lib_dir(errm_sqlite) of
+        {ok, LibDir} ->
+          filename:join([LibDir, "priv", "errm_sqlite_nif"]);
+        _ ->
+          "./priv/errm_sqlite_nif"
+      end;
+    _ ->
+      "./priv/errm_sqlite_nif"
+    end,
+
+    NifPathStr = case NifPath of
+      Path when is_list(Path) -> Path
+    end,
+    case erlang:load_nif(NifPathStr, 0) of
+      ok -> ok;
+      {error, Reason} -> erlang:error({nif_load_failed, Reason})
+    end.
 
 -spec open(Path :: string()) -> {ok, DbHandle :: db_handle()} | {error, Reason :: term()}.
 open(_Path) -> erlang:nif_error(nif_not_loaded).
