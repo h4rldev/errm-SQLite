@@ -1,5 +1,5 @@
 -module(errm_sqlite).
--export([query/2, query/3, exec/2, exec/3, transaction/2, close/1]).
+-export([query/2, query/3, exec/2, exec/3, transaction/2, open/1, close/1]).
 -export([fold/5, fold/4, foreach/4, foreach/3, map/4, map/3]).
 -export([first/2, first/3, scalar/2, scalar/3]).
 -export([format/2]).
@@ -37,6 +37,10 @@ transaction(Db, Fun) ->
       end;
     Error -> Error
   end.
+
+
+-spec open(Path :: string()) -> {ok, Db :: db_handle()} | {error, Reason :: term()}.
+open(Path) -> errm_sqlite_nif:open(Path).
 
 -spec close(Db :: db_handle()) -> ok | busy.
 close(Db) -> errm_sqlite_nif:close(Db).
