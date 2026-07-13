@@ -7,22 +7,22 @@
 init() ->
   NifPath = case code:priv_dir(errm_sqlite) of
     PrivDir when is_list(PrivDir) ->
-      io:format("Found priv_dir~n"),
-      io:format("priv_dir: ~p~n", [PrivDir]),
+      logger:info("Found priv_dir"),
+      logger:info("priv_dir: ~p", [PrivDir]),
       filename:join([PrivDir, "errm_sqlite_nif"]);
     {error, bad_name} ->
-      io:format("Could not find priv_dir~n"),
+      logger:error("Could not find priv_dir"),
       case code:lib_dir(errm_sqlite) of
         {ok, LibDir} ->
-          io:format("Found lib_dir~n"),
-          io:format("lib_dir: ~p~n", [LibDir]),
+          logger:info("Found lib_dir"),
+          logger:info("lib_dir: ~p", [LibDir]),
           filename:join([LibDir, "priv", "errm_sqlite_nif"]);
         _ ->
-          io:format("Could not find lib_dir~n"),
+          logger:error("Could not find lib_dir"),
           "./priv/errm_sqlite_nif"
       end;
     _ ->
-      io:format("Could not find priv_dir, and it wasnt bad_name~n"),
+      logger:error("Could not find priv_dir, and it wasnt bad_name"),
       "./priv/errm_sqlite_nif"
     end,
 
