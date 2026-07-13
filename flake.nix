@@ -19,12 +19,11 @@
 
       src = ./.;
 
-      buildPlugins = [beamPackages.pc];
-      buildInputs = with pkgs; [sqlite];
-      beamDeps = [];
+      buildInputs = with pkgs; [sqlite just];
 
       env = {
         REBAR_PROFILE = "prod";
+        ERL_ROOT = "${beamPackages.erlang}/lib/erlang";
       };
     };
 
@@ -34,12 +33,12 @@
 
       src = ./.;
 
-      buildPlugins = [beamPackages.pc];
-      buildInputs = with pkgs; [sqlite];
+      buildInputs = with pkgs; [sqlite just];
       beamDeps = [];
 
       env = {
         REBAR_PROFILE = "debug";
+        ERL_ROOT = "${beamPackages.erlang}/lib/erlang";
       };
     };
   in {

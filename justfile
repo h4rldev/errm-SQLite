@@ -1,8 +1,66 @@
-set shell := ["bash", "-c"]
 set quiet
+set shell := ["bash", "-c"]
 
-__compile:
-    gcc -o priv/errm_sqlite_nif.so -shared -fPIC -I${ERL_ROOT}/usr/include -L${ERL_ROOT}/usr/lib -lsqlite3 c_src/errm_sqlite_nif.c
+c_flags_mac := "-I/opt/local/include"
+ld_flags_mac := "-L/opt/local/lib"
+
+prod_c_flags := "-O2 -flto"
+prod_link := "-Wl,-O2 -flto"
+
+debug_c_flags := "-ggdb -g -Og"
+debug_link := debug_c_flags + " -Wl,--no-as-needed -Wl,--gc-sections -Wl,-z,relro -Wl,-z,now"
+
+green := "\\x1b[32m"
+red := "\\x1b[31m"
+clear := "\\x1b[0m"
+
+sqlite_available := shell("if pkg-config --exists sqlite3 2>/dev/null; then echo yes; else echo no; fi")
+
+__print_yes:
+    echo -ne "{{ green }}yes{{ clear }}"
+
+__print_no:
+    echo -ne "{{ red }}no{{ clear }}"
+
+__print_missing:
+    echo -e "[{{ red }}lib missing{{ clear }}]"
+
+clean_nifs:
+    rm priv/*
+
+build_nifs profile="debug": (build_sqlite profile)
+    echo -ne "priv/errm_sqlite_nif.so -> exists: "
+    if [ -f "priv/errm_sqlite_nif.so" ]; then just __print_yes; echo ''; else just __print_no; {{ if sqlite_available == "yes" { "echo ''; echo 'build_failed' > 'check.txt';" } else { "echo -n ' '; just __print_missing;" } }} fi;
+    if [ -f "check.txt" ]; then rm "check.txt"; echo -e "build_nifs: Some builds {{ red }}failed{{ clear }}"; fi
+
+build_sqlite_if_available profile="debug":
+    {{ if sqlite_available == "yes" { "just build_sqlite profile" } else { "echo -e 'sqlite not found, you'll need it installed'; exit 0;" } }}
+
+[unix]
+build_sqlite profile="debug":
+    if gcc -o priv/errm_sqlite_nif.so -shared -fPIC \
+      {{ if profile == "prod" { prod_c_flags } else { debug_c_flags } }} \
+      -I${ERL_ROOT}/usr/include -L${ERL_ROOT}/usr/lib \
+      {{ if profile == "prod" { prod_link } else { debug_link } }} \
+      -lsqlite3 c_src/errm_sqlite_nif.c; then \
+    echo -e "c_src/errm_sqlite_nif.c   -> priv/errm_sqlite_nif.so   [{{ green }}done{{ clear }}]"; \
+    {{ if profile == "prod" { "strip --strip-unneeded priv/errm_sqlite_nif.so;" } else { "echo -e 'Skipping strip...';" } }} \
+    else \
+    echo -e "c_src/errm_sqlite_nif.c   -> priv/errm_sqlite_nif.so   [{{ red }}failed{{ clear }}]"; \
+    fi
+
+[macos]
+build_sqlite profile="debug":
+    if gcc -o priv/errm_sqlite_nif.so -shared -fPIC \
+      {{ if profile == "prod" { c_flags_mac + " " + prod_c_flags } else { c_flags_mac + " " + debug_c_flags } }} \
+      -I${ERL_ROOT}/usr/include -L${ERL_ROOT}/usr/lib \
+      {{ if profile == "prod" { ld_flags_mac + " " + prod_link } else { ld_flags_mac + " " + debug_link } }} \
+      -lsqlite3 c_src/errm_sqlite_nif.c; then \
+    echo -e "c_src/errm_sqlite_nif.c   -> priv/errm_sqlite_nif.so   [{{ green }}done{{ clear }}]"; \
+    {{ if profile == "prod" { "strip --strip-unneeded priv/errm_sqlite_nif.so;" } else { "echo -e 'Skipping strip...';" } }} \
+    else \
+    echo -e "c_src/errm_sqlite_nif.c   -> priv/errm_sqlite_nif.so   [{{ red }}failed{{ clear }}]"; \
+    fi
 
 bear:
-    bear -- just __compile
+    bear -- just build_nifs
