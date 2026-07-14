@@ -3,7 +3,10 @@
 -export([fold/5, fold/4, foreach/4, foreach/3, map/4, map/3]).
 -export([first/2, first/3, scalar/2, scalar/3]).
 -export([format/2]).
+
+% elp:ignore W0020
 -include("include/errm_sqlite.hrl").
+-export_type([db_handle/0, stmt_handle/0, row/0, sql/0, bind_args/0]).
 
 -spec query(Db :: db_handle(), Sql :: sql()) -> {ok, Cols :: [row()]} | {error, Reason :: term()}.
 query(Db, Sql) -> query(Db, Sql, []).
