@@ -5,26 +5,38 @@
 
 -spec init() -> ok.
 init() ->
+  BaseName = "errm_sqlite_nif",
   Candidates = [
     case escript:script_name() of
-      Script when is_list(Script) ->
-        Dir = filename:dirname(Script),
-        filename:join([Dir, "..", "priv", "errm_sqlite_nif"]);
-      _ ->
-        false
+      Script0 when is_list(Script0) ->
+        Dir0 = filename:dirname(Script0),
+        filename:join([Dir0, "..", "lib", "errm_sqlite", "priv", BaseName]);
+      _ -> false
+    end,
+    case escript:script_name() of
+      Script1 when is_list(Script1) ->
+        Dir1 = filename:dirname(Script1),
+        filename:join([Dir1, "..", "priv", BaseName]);
+      _ -> false
+    end,
+    case escript:script_name() of
+      Script2 when is_list(Script2) ->
+        Dir2 = filename:dirname(Script2),
+        filename:join(Dir2, BaseName);
+      _ -> false
     end,
     case code:priv_dir(errm_sqlite) of
-      Priv when is_list(Priv) -> filename:join(Priv, "errm_sqlite_nif");
+      Priv when is_list(Priv) -> filename:join(Priv, BaseName);
       _ -> false
     end,
     case code:lib_dir(errm_sqlite) of
-      {ok, LibDir} -> filename:join([LibDir, "priv", "errm_sqlite_nif"]);
+      {ok, LibDir} -> filename:join([LibDir, "priv", BaseName]);
       _ -> false
     end,
-    "./priv/errm_sqlite_nif",
+    filename:join("priv", BaseName),
+    filename:join(".", BaseName),
     os:getenv("ERRM_SQLITE_NIF_PATH")
   ],
-
   Paths = lists:filtermap(fun
     (false) -> false;
     (undefined) -> false;
