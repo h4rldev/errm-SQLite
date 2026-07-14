@@ -34,7 +34,13 @@ build_nifs profile="debug": (build_sqlite profile)
     if [ -f "check.txt" ]; then rm "check.txt"; echo -e "build_nifs: Some builds {{ red }}failed{{ clear }}"; fi
 
 build_sqlite_if_available profile="debug":
-    {{ if sqlite_available == "yes" { "just build_sqlite profile" } else { "echo -e 'sqlite not found, you'll need it installed'; exit 0;" } }}
+    #!/usr/bin/env bash
+
+    if [ {{ sqlite_available }} == "no" ]; then
+      echo -e 'sqlite not found, you'll need it installed'; exit 0;
+    else
+      just build_sqlite {{ profile }}
+    fi
 
 [unix]
 build_sqlite profile="debug":

@@ -19,7 +19,12 @@
 
       src = ./.;
 
+      nativeBuildInputs = with pkgs; [pkg-config];
       buildInputs = with pkgs; [sqlite just];
+
+      preBuild = ''
+        sed -i 's|#!/usr/bin/env bash|#!${pkgs.bash}/bin/bash|' justfile
+      '';
 
       env = {
         REBAR_PROFILE = "prod";
@@ -33,8 +38,12 @@
 
       src = ./.;
 
+      nativeBuildInputs = with pkgs; [pkg-config];
       buildInputs = with pkgs; [sqlite just];
-      beamDeps = [];
+
+      preBuild = ''
+        sed -i 's|#!/usr/bin/env bash|#!${pkgs.bash}/bin/bash|' justfile
+      '';
 
       env = {
         REBAR_PROFILE = "debug";
