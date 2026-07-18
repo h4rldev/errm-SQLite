@@ -27,7 +27,7 @@ ensure_extracted() ->
       if Script == undefined ->
         erlang:error(no_escript_to_extract);
         true ->
-          {ok, Sections} = escript:extract(Script, [{section, [body]}]),
+          {ok, Sections} = escript:extract(Script, []),
           ZipBinary = case proplists:get_value(zip, Sections) of
             Zip when is_binary(Zip) -> Zip
           end,
