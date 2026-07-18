@@ -18,7 +18,7 @@ path(Module, BaseName) ->
 
 use_extracted(Module, BaseName) ->
   Root = ensure_extracted(),
-  filename:join([Root, "lib", atom_to_list(Module), "priv", BaseName]).
+  filename:join([Root, atom_to_list(Module), "priv", BaseName]).
 
 ensure_extracted() ->
   case persistent_term:get(?CACHE_KEY, undefined) of
