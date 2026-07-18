@@ -32,7 +32,7 @@ ensure_extracted() ->
             Zip when is_binary(Zip) -> Zip
           end,
           TempDir = create_temp_dir(),
-          ok = zip:unzip(ZipBinary, [{cwd, TempDir}]),
+          {ok, _Files} = zip:unzip(ZipBinary, [{cwd, TempDir}]),
           persistent_term:put(?CACHE_KEY, TempDir),
           TempDir
       end;
