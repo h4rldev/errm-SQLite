@@ -28,7 +28,7 @@ ensure_extracted() ->
         erlang:error(no_escript_to_extract);
         true ->
           {ok, Sections} = escript:extract(Script, []),
-          ZipBinary = case proplists:get_value(zip, Sections) of
+          ZipBinary = case proplists:get_value(archive, Sections) of
             Zip when is_binary(Zip) -> Zip
           end,
           TempDir = create_temp_dir(),
