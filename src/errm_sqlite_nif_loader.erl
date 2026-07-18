@@ -1,7 +1,7 @@
 -module(errm_sqlite_nif_loader).
 -export([path/2]).
 
--define(CACHE_KEY, {?MODULE, extracted_root}).
+-define(CACHE_KEY, {nif_loader, extracted_root}).
 
 path(Module, BaseName) ->
   case code:priv_dir(Module) of
