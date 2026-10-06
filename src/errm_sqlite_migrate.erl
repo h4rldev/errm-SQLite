@@ -36,11 +36,15 @@ run_migration(Db, File, Table) ->
   case errm_sqlite:query(Db, errm_sqlite:format("SELECT name FROM ~s WHERE name = ?", [Table]), [Name]) of
     {ok, []} ->
       {ok, Sql} = file:read_file(File),
-      errm_sqlite:transaction(Db, fun(Db1) ->
+      case errm_sqlite:transaction(Db, fun(Db1) ->
         {ok, _} = errm_sqlite:exec(Db1, binary_to_list(Sql)),
         {ok, _} = errm_sqlite:exec(Db1, errm_sqlite:format("INSERT INTO ~s (name, ran_at) VALUES (?, datetime('now'))", [Table]), [Name])
-      end),
-      io:format("[errm_sqlite] Applied migration: ~s~n", [Name]);
+      end) of
+        {ok, _} ->
+          io:format("[errm_sqlite] Applied migration: ~s~n", [Name]);
+        {error, Reason} ->
+          erlang:error({migration_failed, Name, Reason})
+      end;
     {ok, [_]} ->
       already_applied
   end.
