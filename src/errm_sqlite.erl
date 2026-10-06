@@ -17,7 +17,7 @@ query(Db, Sql, Args) -> with_stmt(Db, Sql, Args, fun consume_all/1).
 
 -spec exec(db_handle(), sql()) -> {ok, non_neg_integer()} | {error, term()}.
 exec(Db, Sql) ->
-    exec(Db, Sql, []).
+  errm_sqlite_nif:exec(Db, Sql).
 
 -spec exec(db_handle(), sql(), bind_args()) -> {ok, non_neg_integer()} | {error, term()}.
 exec(Db, Sql, Args) ->
